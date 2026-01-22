@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Fretes Sana</title>
+
+    <!-- Ícone que aparecerá no celular -->
+    <link rel="apple-touch-icon" href="192.png">
+    <link rel="icon" sizes="192x192" href="192.png">
+
+    <!-- CSS da Biblioteca AddToHomescreen -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/philfung/add-to-homescreen@3.4/dist/add-to-homescreen.min.css">
+
+    <!-- Manifesto Mágico (Base64 para Fretes Sana) -->
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiRnJldGVzIFNhbmEiLCJzaG9ydF9uYW1lIjoiRnJldGVzIFNhbmEiLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsInN0YXJ0X3VybCI6Ii4vIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmZmZmZmYiLCJ0aGVtZV9jb2xvciI6IiNmZmZmZmYiLCJpY29ucyI6W3sic3JjIjoiaHR0cHM6Ly92aWEucGxhY2Vob2xkZXIuY29tLzE5Mi5wbmc/dGV4dD1GUyIsInNpemVzIjoiMTkyeDE5MiIsInR5cGUiOiJpbWFnZS9wbmcifSx7InNyYyI6Imh0dHBzOi8vdmlhLnBsYWNlaG9sZGVyLmNvbS81MTIucG5nP3RleHQ9RlMiLCJzaXplcyI6IjUxMng1MTIiLCJ0eXBlIjoiaW1hZ2UvcG5nIn1dfQ==">
+
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #eee; }
+        iframe { display: block; width: 100%; height: 100vh; border: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Seu Script Google -->
+    <iframe src="https://script.google.com/macros/s/AKfycbzQPun9he-vKKw_Qm9qEVgebUjHJUY2AOjWP-6x34y_rjcctShJSLJwCq4nV4iBzAce/exec" title="App"></iframe>
+
+    <!-- JS da Biblioteca -->
+    <script src="https://cdn.jsdelivr.net/gh/philfung/add-to-homescreen@3.4/dist/add-to-homescreen.min.js"></script>
+
+    <script>
+        // 1. REGISTRO FALSO DO SERVICE WORKER (Para enganar o Android)
+        // Sem isso, o Android nem considera o site um "App"
+        if ('serviceWorker' in navigator) {
+           navigator.serviceWorker.register('sw.js').catch(() => console.log('SW pulado'));
+        }
+
+        // 2. CONFIGURAÇÃO DA BIBLIOTECA
+        document.addEventListener('DOMContentLoaded', function () {
+            window.AddToHomeScreenInstance = window.AddToHomeScreen({
+                appName: 'Fretes Sana',  // Nome no aviso
+                appNameDisplay: 'standalone',
+                showArrow: true,         // Mostra seta apontando para o menu
+                startDelay: 2,           // Espera 2 segundos antes de aparecer
+                lifespan: 0,             // 0 = Aparece SEMPRE (para teste). Mude para 15 depois.
+                skipFirstVisit: false,   // Mostra logo na primeira visita
+                maxDisplayCount: 0       // 0 = Sem limite de vezes
+            });
+            
+            // Força mostrar o aviso (útil se o automático falhar)
+            window.AddToHomeScreenInstance.show();
+        });
+    </script>
+</body>
+</html>
