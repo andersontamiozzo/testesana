@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fretes Sana</title>
+    <link rel="apple-touch-icon" href="192.png">
+    <link rel="icon" href="192.png">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; }
+        iframe { width: 100%; height: 100vh; border: none; display: block; }
+        
+        /* Modal de Instalação Profissional */
+        #install-modal {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85); z-index: 999999;
+            align-items: center; justify-content: center;
+        }
+        #install-modal.show { display: flex; }
+        
+        .modal-content {
+            background: white; border-radius: 16px; padding: 30px;
+            max-width: 400px; margin: 20px; text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } }
+        
+        .modal-content h2 { color: #333; margin-bottom: 10px; font-size: 22px; }
+        .modal-content p { color: #666; margin-bottom: 25px; line-height: 1.5; }
+        
+        .install-steps {
+            background: #f5f5f5; border-radius: 12px; padding: 20px;
+            text-align: left; margin-bottom: 20px;
+        }
+        .install-steps .step {
+            margin: 15px 0; display: flex; align-items: center;
+        }
+        .install-steps .step-num {
+            background: #667eea; color: white; 
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; margin-right: 12px; flex-shrink: 0;
+        }
+        .install-steps .step-text { font-size: 14px; color: #333; }
+        
+        .btn-fechar {
+            background: #667eea; color: white; border: none;
+            padding: 14px 30px; border-radius: 8px; font-size: 16px;
+            cursor: pointer; font-weight: 600; width: 100%;
+        }
+        .btn-fechar:active { transform: scale(0.98); }
+        
+        .emoji { font-size: 48px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <iframe src="https://script.google.com/macros/s/AKfycbzQPun9he-vKKw_Qm9qEVgebUjHJUY2AOjWP-6x34y_rjcctShJSLJwCq4nV4iBzAce/exec"></iframe>
+
+    <!-- Modal Profissional -->
+    <div id="install-modal">
+        <div class="modal-content">
+            <div class="emoji">📱</div>
+            <h2>Instalar Fretes Sana</h2>
+            <p>Acesse mais rápido adicionando à tela inicial</p>
+            
+            <div class="install-steps" id="steps-android" style="display:none;">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-text">Toque nos <b>3 pontinhos (⋮)</b> no canto superior</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-text">Selecione <b>"Instalar aplicativo"</b> ou <b>"Adicionar à tela inicial"</b></div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Confirme tocando em <b>"Instalar"</b></div>
+                </div>
+            </div>
+
+            <div class="install-steps" id="steps-ios" style="display:none;">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-text">Toque no botão <b>Compartilhar (□↑)</b> na barra inferior</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-text">Role para baixo e toque em <b>"Adicionar à Tela de Início"</b></div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Confirme tocando em <b>"Adicionar"</b></div>
+                </div>
+            </div>
+
+            <button class="btn-fechar" onclick="fecharModal()">Entendi!</button>
+        </div>
+    </div>
+
+    <script>
+        // Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+
+        const modal = document.getElementById('install-modal');
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isAndroid = /Android/.test(navigator.userAgent);
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+        // Se já estiver instalado, não mostra nada
+        if (!isStandalone) {
+            // Mostra após 3 segundos
+            setTimeout(() => {
+                if (isIOS) {
+                    document.getElementById('steps-ios').style.display = 'block';
+                    modal.classList.add('show');
+                } else if (isAndroid) {
+                    document.getElementById('steps-android').style.display = 'block';
+                    modal.classList.add('show');
+                }
+            }, 3000);
+        }
+
+        function fecharModal() {
+            modal.classList.remove('show');
+            // Salva no localStorage para não mostrar novamente
+            localStorage.setItem('install-prompt-closed', 'true');
+        }
+
+        // Se o usuário já fechou antes, não mostra
+        if (localStorage.getItem('install-prompt-closed')) {
+            // Opcional: descomentar para não mostrar mais depois que fechar uma vez
+            // modal.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
