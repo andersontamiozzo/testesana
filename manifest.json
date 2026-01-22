@@ -1,0 +1,20 @@
+{
+  "name": "Fretes Sana",
+  "short_name": "Fretes Sana",
+  "display": "standalone",
+  "start_url": "./",
+  "background_color": "#ffffff",
+  "theme_color": "#667eea",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192.png?text=FS",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512.png?text=FS",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

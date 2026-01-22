@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Teste PWA</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+        .status { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .ok { background: #d4edda; }
+        .erro { background: #f8d7da; }
+    </style>
+</head>
+<body>
+    <h2>🔍 Diagnóstico PWA</h2>
+    <div id="resultado"></div>
+    <button onclick="testarInstalacao()" style="padding: 15px; font-size: 16px; margin-top: 20px;">
+        Testar Instalação
+    </button>
+
+    <script>
+        const resultado = document.getElementById('resultado');
+
+        // Teste 1: HTTPS
+        resultado.innerHTML += `<div class="status ${location.protocol === 'https:' ? 'ok' : 'erro'}">
+            <b>1. HTTPS:</b> ${location.protocol}
+        </div>`;
+
+        // Teste 2: Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => {
+                    resultado.innerHTML += `<div class="status ok"><b>2. Service Worker:</b> Registrado com sucesso!</div>`;
+                })
+                .catch(err => {
+                    resultado.innerHTML += `<div class="status erro"><b>2. Service Worker:</b> ERRO - ${err.message}</div>`;
+                });
+        } else {
+            resultado.innerHTML += `<div class="status erro"><b>2. Service Worker:</b> Navegador não suporta</div>`;
+        }
+
+        // Teste 3: Evento beforeinstallprompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            resultado.innerHTML += `<div class="status ok"><b>3. beforeinstallprompt:</b> ✅ Disparou! Site é instalável.</div>`;
+        });
+
+        setTimeout(() => {
+            if (!deferredPrompt) {
+                resultado.innerHTML += `<div class="status erro"><b>3. beforeinstallprompt:</b> ❌ NÃO disparou (pode já estar instalado ou bloqueado)</div>`;
+            }
+        }, 3000);
+
+        // Teste 4: Standalone mode
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        resultado.innerHTML += `<div class="status ${isStandalone ? 'ok' : ''}">
+            <b>4. Já instalado?</b> ${isStandalone ? 'Sim (rodando como app)' : 'Não'}
+        </div>`;
+
+        // Função do botão
+        function testarInstalacao() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    resultado.innerHTML += `<div class="status ok"><b>Resultado:</b> ${choiceResult.outcome}</div>`;
+                    deferredPrompt = null;
+                });
+            } else {
+                alert('O evento de instalação não está disponível. Veja os erros acima.');
+            }
+        }
+    </script>
+</body>
+</html>
